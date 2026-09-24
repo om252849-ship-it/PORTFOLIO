@@ -1,0 +1,181 @@
+{
+  "hero": {
+    "name": "Om Kumar",
+    "subtitle": "Computer Science · Cybersecurity · Creative Design",
+    "description": "Building secure digital experiences with creative precision",
+    "cta": [
+      { "text": "Explore My Work", "target": "#projects" },
+      { "text": "Get in Touch", "target": "#contact" }
+    ]
+  },
+  "about": {
+    "bio": "Computer Science graduate with expertise in cybersecurity and creative problem-solving. I combine technical knowledge with creative solutions to deliver exceptional results. With certifications in Cyber Security and Adobe Photoshop, I bridge the gap between technical requirements and user-friendly implementations.",
+    "stats": [
+      { "value": "BCA (2nd Yr)", "label": "AI & Deep Learning" },
+      { "value": "Diploma", "label": "Computer Science (CSE)" },
+      { "value": "Certified", "label": "Cybersecurity & Photoshop" }
+    ]
+  },
+  "skills": [
+    {
+      "category": "Cybersecurity",
+      "icon": "shield",
+      "items": ["Ethical Hacking", "Security Analysis", "Threat Assessment", "Vulnerability Management", "Security Best Practices"]
+    },
+    {
+      "category": "Design & Creative",
+      "icon": "palette",
+      "items": ["Adobe Photoshop CS6", "Digital Content Creation", "Visual Design", "Graphic Design", "Brand Identity"]
+    },
+    {
+      "category": "Programming",
+      "icon": "code",
+      "items": ["Computer Science Fundamentals", "Software Development", "System Analysis", "AI & Deep Learning", "Problem Solving"]
+    },
+    {
+      "category": "Core Competencies",
+      "icon": "users",
+      "items": ["Creative Problem Solving", "Team Collaboration", "Strong Communication", "Analytical Thinking", "Time Management"]
+    }
+  ],
+  "experience": [
+    {
+      "type": "education",
+      "role": "Secondary Schooling (10th)",
+      "company": "Sant Nandlal Smriti Vidya Mandir",
+      "location": "Ghatshila, Jharkhand",
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=Sant+Nandlal+Smriti+Vidya+Mandir+Ghatshila+Jharkhand",
+      "startDate": "",
+      "endDate": "Completed 2022",
+      "bullets": [
+        "Completed 10th standard secondary schooling with strong foundational coursework in Computer Science and Mathematics",
+        "Participated in school technical initiatives, creative activities, and computational logic clubs"
+      ],
+      "preview": {
+        "image": "/images/campus-snsvm.jpg",
+        "title": "Sant Nandlal Smriti Vidya Mandir",
+        "subtitle": "Dak Bungalow Road, Ghatshila, Jharkhand",
+        "tagline": "CBSE Co-Ed School · Est. 1986",
+        "highlights": ["CBSE Affiliated", "Class I–XII", "Ghatshila Campus"]
+      }
+    },
+    {
+      "type": "certification",
+      "role": "Adobe Photoshop CS6 Certification & Creative Design",
+      "company": "Adobe",
+      "location": "Certified",
+      "mapUrl": "",
+      "startDate": "",
+      "endDate": "Certified",
+      "bullets": [
+        "Earned professional certification in Adobe Photoshop CS6 with expertise in digital image editing, manipulation, and visual layout",
+        "Designed brand identity assets, creative digital compositions, and promotional graphics bridging design with technology"
+      ]
+    },
+    {
+      "type": "education",
+      "role": "Diploma in Computer Science & Engineering (CSE)",
+      "company": "ARKA JAIN University",
+      "location": "Jamshedpur, Jharkhand",
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=ARKA+JAIN+University+Gamharia+Jamshedpur+Jharkhand",
+      "startDate": "2022",
+      "endDate": "2024",
+      "bullets": [
+        "Rigorous diploma curriculum covering computer science fundamentals, programming languages, data structures, and algorithms",
+        "Practical laboratory training in system architecture, networking, database management, and software development"
+      ],
+      "preview": {
+        "image": "/images/campus-arkajain.jpg",
+        "title": "ARKA JAIN University",
+        "subtitle": "Mohanpur, Gamharia, Jamshedpur, Jharkhand",
+        "tagline": "NAAC 'A' Grade Private University",
+        "highlights": ["NAAC 'A' Grade", "25+ Acre Campus", "AICTE Approved"]
+      }
+    },
+    {
+      "type": "education",
+      "role": "Bachelor of Computer Applications (BCA) — AI & Deep Learning",
+      "company": "ARKA JAIN University",
+      "location": "Jamshedpur, Jharkhand",
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=ARKA+JAIN+University+Gamharia+Jamshedpur+Jharkhand",
+      "startDate": "2024",
+      "endDate": "Present (Currently in 2nd Year)",
+      "bullets": [
+        "Specialization in Artificial Intelligence and Deep Learning technologies",
+        "Currently in 2nd Year, exploring machine learning models, neural network architectures, and full-stack web applications",
+        "Combining theoretical computer science with practical hands-on software development"
+      ],
+      "preview": {
+        "image": "/images/campus-arkajain.jpg",
+        "title": "ARKA JAIN University — BCA",
+        "subtitle": "Mohanpur, Gamharia, Jamshedpur, Jharkhand",
+        "tagline": "Department of CS & AI Specialization",
+        "highlights": ["AI & Deep Learning", "2nd Year", "Modern Computing Labs"]
+      }
+    },
+    {
+      "type": "work",
+      "role": "Customer Service Representative",
+      "company": "FiveS Digital",
+      "location": "Jamshedpur, Jharkhand",
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=FiveS+Digital+Jamshedpur+Jharkhand",
+      "startDate": "June 2025",
+      "endDate": "February 2026",
+      "bullets": [
+        "Provided comprehensive technical and customer support, resolving complex client inquiries with high satisfaction rates",
+        "Collaborated with cross-functional teams to streamline customer service processes and improve operational efficiency",
+        "Utilized problem-solving skills to troubleshoot technical problems and deliver timely solutions",
+        "Maintained detailed documentation of customer interactions and technical resolutions"
+      ],
+      "preview": {
+        "image": "/images/campus-fives.jpg",
+        "title": "FiveS Digital Tech Center",
+        "subtitle": "Zone-1 Mall, NH-33, Mango, Jamshedpur",
+        "tagline": "Digital CX & Enterprise BPO Solutions",
+        "highlights": ["Customer Operations", "Tech Support", "Jamshedpur Center"]
+      }
+    },
+    {
+      "type": "certification",
+      "role": "Tata Cybersecurity Analyst Job Simulation",
+      "company": "Tata Group",
+      "location": "Virtual Experience",
+      "mapUrl": "",
+      "startDate": "",
+      "endDate": "Completed",
+      "bullets": [
+        "Gained practical experience in cybersecurity analysis, threat detection, and security operations",
+        "Conducted vulnerability assessments, identity management reviews, and security incident response simulations"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "title": "CyberShield Dashboard",
+      "description": "A comprehensive security analysis and threat monitoring dashboard designed to visualize network vulnerabilities, track security incidents, and provide real-time threat intelligence for organizational security teams.",
+      "tags": ["Cybersecurity", "Threat Analysis", "Dashboard", "Security Ops"],
+      "image": "/images/project-cyber.jpg",
+      "link": "#"
+    },
+    {
+      "title": "VisualCraft Studio",
+      "description": "A creative design portfolio showcasing brand identity work, digital illustrations, and visual content created using Adobe Photoshop CS6. Features a curated collection of design projects across multiple industries.",
+      "tags": ["Photoshop", "Brand Design", "Visual Identity", "Creative"],
+      "image": "/images/project-design.jpg",
+      "link": "#"
+    },
+    {
+      "title": "NeuralNet Explorer",
+      "description": "An interactive AI and deep learning visualization tool that helps users understand neural network architectures, training processes, and model predictions through intuitive visual representations.",
+      "tags": ["AI/ML", "Deep Learning", "Visualization", "Python"],
+      "image": "/images/project-ai.jpg",
+      "link": "#"
+    }
+  ],
+  "contact": {
+    "email": "omkumarind69@gmail.com",
+    "phone": "+91 7739803291",
+    "linkedin": "https://linkedin.com/in/om-kumar04",
+    "location": "Jamshedpur, Jharkhand, India"
+  }
+}
