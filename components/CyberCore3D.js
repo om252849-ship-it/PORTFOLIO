@@ -5,32 +5,27 @@ import * as THREE from 'three';
 
 export default function CyberCore3D() {
   const containerRef = useRef(null);
-  const [spinSpeed, setSpinSpeed] = useState(1);
-  const [pulseKey, setPulseKey] = useState(0);
-  const [telemetry, setTelemetry] = useState({
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [telemetryState, setTelemetryState] = useState({
     fps: 60,
-    nodes: 142,
-    status: 'OPTIMAL',
-    entropy: '0.042',
+    nodes: 86,
+    status: 'SECURE',
   });
-
-  const speedMultiplierRef = useRef(1);
-  const targetSpeedRef = useRef(1);
-  const pulseTriggerRef = useRef(0);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // --- Scene & Camera ---
+    // --- Scene & Camera Setup ---
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      45,
+      42,
       container.clientWidth / container.clientHeight,
       0.1,
       1000
     );
-    camera.position.z = 7.5;
+    camera.position.z = 8.6;
 
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
@@ -42,312 +37,394 @@ export default function CyberCore3D() {
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
+    // --- Core Master Group ---
     const masterGroup = new THREE.Group();
+    masterGroup.position.set(0, 0, 0);
     scene.add(masterGroup);
 
-    // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
-    scene.add(ambientLight);
+    // Check Theme
+    const getIsDark = () => {
+      if (typeof document === 'undefined') return true;
+      const theme = document.documentElement.getAttribute('data-theme');
+      return theme !== 'light';
+    };
 
-    const pointLightCyan = new THREE.PointLight(0x00f0ff, 3.5, 50);
-    pointLightCyan.position.set(4, 5, 4);
-    scene.add(pointLightCyan);
+    let isDark = getIsDark();
 
-    const pointLightViolet = new THREE.PointLight(0x8b5cf6, 3.2, 50);
-    pointLightViolet.position.set(-4, -5, 4);
-    scene.add(pointLightViolet);
+    // Color definitions
+    const getColors = (dark) => ({
+      wireframe: dark ? 0x00e5ff : 0x937c56,
+      innerCore: dark ? 0x07111e : 0xfcf9f2,
+      emissive: dark ? 0x00f0ff : 0xc5a059,
+      points: dark ? 0x00ff88 : 0xb5893a,
+      ring1: dark ? 0x00f0ff : 0xb8954d,
+      ring2: dark ? 0xc5a059 : 0x947230,
+      particles: dark ? 0x67e8f9 : 0xa89980,
+      lightA: dark ? 0x00f0ff : 0xfff6e6,
+      lightB: dark ? 0x10b981 : 0xd97706,
+    });
 
-    const pointLightEmerald = new THREE.PointLight(0x10b981, 2.8, 50);
-    pointLightEmerald.position.set(0, 4, -4);
-    scene.add(pointLightEmerald);
+    let colors = getColors(isDark);
 
-    // --- 1. Outer Holographic Geodesic Cage ---
-    const outerGeo = new THREE.IcosahedronGeometry(1.8, 2);
+    // --- 1. Outer Geodesic Wireframe Sphere ---
+    const outerGeo = new THREE.IcosahedronGeometry(1.85, 2);
     const outerMat = new THREE.MeshStandardMaterial({
-      color: 0x38bdf8,
+      color: colors.wireframe,
       wireframe: true,
       transparent: true,
-      opacity: 0.45,
-      roughness: 0.2,
-      metalness: 0.8,
+      opacity: isDark ? 0.45 : 0.28,
+      roughness: isDark ? 0.3 : 0.2,
+      metalness: isDark ? 0.8 : 0.6,
     });
     const outerMesh = new THREE.Mesh(outerGeo, outerMat);
     masterGroup.add(outerMesh);
 
-    // --- 2. Outer Vertex Glowing Nodes ---
+    // --- 2. Vertex Glowing Nodes (Points) ---
     const pointsMat = new THREE.PointsMaterial({
-      color: 0x00f0ff,
-      size: 0.08,
+      color: colors.points,
+      size: isDark ? 0.08 : 0.065,
       transparent: true,
-      opacity: 0.9,
+      opacity: isDark ? 0.95 : 0.75,
     });
     const nodesPoints = new THREE.Points(outerGeo, pointsMat);
     masterGroup.add(nodesPoints);
 
-    // --- 3. Crystalline Quantum Inner Core ---
-    const innerGeo = new THREE.OctahedronGeometry(1.05, 1);
+    // --- 3. Inner Crystalline Cyber Core ---
+    const innerGeo = new THREE.OctahedronGeometry(1.0, 0);
     const innerMat = new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
-      emissive: 0x6366f1,
-      emissiveIntensity: 0.6,
-      roughness: 0.15,
-      metalness: 0.95,
+      color: colors.innerCore,
+      emissive: colors.emissive,
+      emissiveIntensity: isDark ? 0.6 : 0.35,
+      roughness: isDark ? 0.1 : 0.25,
+      metalness: isDark ? 0.95 : 0.8,
       flatShading: true,
+      transparent: true,
+      opacity: isDark ? 0.92 : 0.88,
     });
     const innerCore = new THREE.Mesh(innerGeo, innerMat);
     masterGroup.add(innerCore);
 
-    // --- 4. Rotating Energy Rings ---
-    const ringGeo1 = new THREE.TorusGeometry(2.35, 0.022, 16, 100);
-    const ringMat1 = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
+    // Inner wireframe overlay for tech facets
+    const innerWireMat = new THREE.MeshBasicMaterial({
+      color: colors.emissive,
+      wireframe: true,
       transparent: true,
-      opacity: 0.65,
+      opacity: isDark ? 0.6 : 0.4,
     });
-    const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
+    const innerWire = new THREE.Mesh(innerGeo, innerWireMat);
+    masterGroup.add(innerWire);
+
+    // --- 4. Holographic Orbital Rings ---
+    const ring1Geo = new THREE.RingGeometry(2.35, 2.38, 64);
+    const ring1Mat = new THREE.MeshBasicMaterial({
+      color: colors.ring1,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: isDark ? 0.5 : 0.3,
+    });
+    const ring1 = new THREE.Mesh(ring1Geo, ring1Mat);
     ring1.rotation.x = Math.PI / 3;
+    ring1.rotation.y = Math.PI / 6;
     masterGroup.add(ring1);
 
-    const ringGeo2 = new THREE.TorusGeometry(2.55, 0.018, 16, 100);
-    const ringMat2 = new THREE.MeshBasicMaterial({
-      color: 0xec4899,
+    const ring2Geo = new THREE.RingGeometry(2.65, 2.67, 64);
+    const ring2Mat = new THREE.MeshBasicMaterial({
+      color: colors.ring2,
+      side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.5,
+      opacity: isDark ? 0.45 : 0.25,
     });
-    const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
-    ring2.rotation.y = Math.PI / 4;
+    const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+    ring2.rotation.x = -Math.PI / 4;
+    ring2.rotation.z = Math.PI / 5;
     masterGroup.add(ring2);
 
-    // --- 5. Orbiting Quantum Swarm Particles ---
+    // --- 5. Cyber Particle Field (Floating Stardust) ---
     const particleCount = 180;
     const particlePositions = new Float32Array(particleCount * 3);
-    const particleAngles = [];
-
-    for (let i = 0; i < particleCount; i++) {
-      const radius = 2.2 + Math.random() * 1.2;
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      const radius = 2.1 + Math.random() * 1.9;
       const theta = Math.random() * Math.PI * 2;
-      const phi = (Math.random() - 0.5) * Math.PI;
-
-      particlePositions[i * 3] = radius * Math.cos(theta) * Math.cos(phi);
-      particlePositions[i * 3 + 1] = radius * Math.sin(phi);
-      particlePositions[i * 3 + 2] = radius * Math.sin(theta) * Math.cos(phi);
-
-      particleAngles.push({
-        radius,
-        theta,
-        phi,
-        speed: (Math.random() * 0.015 + 0.005) * (Math.random() > 0.5 ? 1 : -1),
-      });
+      const phi = Math.acos(Math.random() * 2 - 1);
+      particlePositions[i] = radius * Math.sin(phi) * Math.cos(theta);
+      particlePositions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      particlePositions[i + 2] = radius * Math.cos(phi);
     }
-
-    const swarmGeo = new THREE.BufferGeometry();
-    swarmGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-
-    const swarmMat = new THREE.PointsMaterial({
-      color: 0x38bdf8,
-      size: 0.05,
+    const particlesGeo = new THREE.BufferGeometry();
+    particlesGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    const particlesMat = new THREE.PointsMaterial({
+      color: colors.particles,
+      size: isDark ? 0.05 : 0.04,
       transparent: true,
-      opacity: 0.8,
-      blending: THREE.AdditiveBlending,
+      opacity: isDark ? 0.75 : 0.5,
     });
-    const particleSwarm = new THREE.Points(swarmGeo, swarmMat);
-    masterGroup.add(particleSwarm);
+    const particleCloud = new THREE.Points(particlesGeo, particlesMat);
+    masterGroup.add(particleCloud);
 
-    // --- Mouse & Gyro Drag Physics ---
+    // --- 6. Dynamic Lights ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, isDark ? 0.9 : 1.3);
+    scene.add(ambientLight);
+
+    const light1 = new THREE.PointLight(colors.lightA, isDark ? 3.0 : 1.8, 15);
+    light1.position.set(4, 3, 5);
+    scene.add(light1);
+
+    const light2 = new THREE.PointLight(colors.lightB, isDark ? 2.5 : 1.4, 15);
+    light2.position.set(-4, -3, 3);
+    scene.add(light2);
+
+    // --- 7. Theme Synchronization ---
+    const updateTheme = () => {
+      const dark = getIsDark();
+      if (dark === isDark) return;
+      isDark = dark;
+      colors = getColors(dark);
+
+      outerMat.color.setHex(colors.wireframe);
+      outerMat.opacity = dark ? 0.45 : 0.28;
+      outerMat.roughness = dark ? 0.3 : 0.2;
+      outerMat.metalness = dark ? 0.8 : 0.6;
+
+      pointsMat.color.setHex(colors.points);
+      pointsMat.size = dark ? 0.08 : 0.065;
+      pointsMat.opacity = dark ? 0.95 : 0.75;
+
+      innerMat.color.setHex(colors.innerCore);
+      innerMat.emissive.setHex(colors.emissive);
+      innerMat.emissiveIntensity = dark ? 0.6 : 0.35;
+      innerMat.roughness = dark ? 0.1 : 0.25;
+      innerMat.metalness = dark ? 0.95 : 0.8;
+      innerMat.opacity = dark ? 0.92 : 0.88;
+
+      innerWireMat.color.setHex(colors.emissive);
+      innerWireMat.opacity = dark ? 0.6 : 0.4;
+
+      ring1Mat.color.setHex(colors.ring1);
+      ring1Mat.opacity = dark ? 0.5 : 0.3;
+
+      ring2Mat.color.setHex(colors.ring2);
+      ring2Mat.opacity = dark ? 0.45 : 0.25;
+
+      particlesMat.color.setHex(colors.particles);
+      particlesMat.size = dark ? 0.05 : 0.04;
+      particlesMat.opacity = dark ? 0.75 : 0.5;
+
+      ambientLight.intensity = dark ? 0.9 : 1.3;
+      light1.color.setHex(colors.lightA);
+      light1.intensity = dark ? 3.0 : 1.8;
+      light2.color.setHex(colors.lightB);
+      light2.intensity = dark ? 2.5 : 1.4;
+    };
+
+    const themeObserver = new MutationObserver(() => updateTheme());
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+
+    // --- 8. Mouse & Interactive Physics Engine ---
     let mouseX = 0;
     let mouseY = 0;
-    let targetX = 0;
-    let targetY = 0;
     let isDragging = false;
-    let previousMousePosition = { x: 0, y: 0 };
+    let previousPointerX = 0;
+    let previousPointerY = 0;
+    let velocityX = 0;
+    let velocityY = 0;
 
-    const handlePointerMove = (e) => {
-      const rect = container.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      targetX = x * 2.5;
-      targetY = y * 2.5;
+    const onPointerDown = (e) => {
+      isDragging = true;
+      setIsInteracting(true);
+      setHasInteracted(true);
+      previousPointerX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      previousPointerY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+      velocityX = 0;
+      velocityY = 0;
+    };
+
+    const onPointerMove = (e) => {
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
 
       if (isDragging) {
-        const deltaX = e.clientX - previousMousePosition.x;
-        const deltaY = e.clientY - previousMousePosition.y;
-        masterGroup.rotation.y += deltaX * 0.01;
-        masterGroup.rotation.x += deltaY * 0.01;
+        const deltaX = clientX - previousPointerX;
+        const deltaY = clientY - previousPointerY;
+        velocityX = deltaX * 0.006;
+        velocityY = deltaY * 0.006;
+        masterGroup.rotation.y += velocityX;
+        masterGroup.rotation.x += velocityY;
+        previousPointerX = clientX;
+        previousPointerY = clientY;
+      } else {
+        const rect = container.getBoundingClientRect();
+        const normX = (clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+        const normY = (clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+        mouseX = normX;
+        mouseY = normY;
       }
-      previousMousePosition = { x: e.clientX, y: e.clientY };
     };
 
-    const handlePointerDown = (e) => {
-      isDragging = true;
-      previousMousePosition = { x: e.clientX, y: e.clientY };
-    };
-
-    const handlePointerUp = () => {
+    const onPointerUp = () => {
       isDragging = false;
+      setIsInteracting(false);
     };
 
-    container.addEventListener('pointermove', handlePointerMove);
-    container.addEventListener('pointerdown', handlePointerDown);
-    window.addEventListener('pointerup', handlePointerUp);
+    const domEl = renderer.domElement;
+    domEl.addEventListener('mousedown', onPointerDown);
+    domEl.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('touchmove', onPointerMove, { passive: true });
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('touchend', onPointerUp);
 
-    // Resize Handler
-    const handleResize = () => {
+    // --- 9. Visibility & Resize Control ---
+    let isVisible = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(container);
+
+    const onResize = () => {
       if (!container) return;
-      camera.aspect = container.clientWidth / container.clientHeight;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setSize(width, height);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', onResize);
 
-    // Animation Loop
-    let animId;
+    // --- 10. Animation Loop ---
+    let frameId;
     let clock = new THREE.Clock();
 
     const animate = () => {
-      animId = requestAnimationFrame(animate);
+      frameId = requestAnimationFrame(animate);
+
+      if (!isVisible) return;
+
       const delta = clock.getDelta();
       const elapsedTime = clock.getElapsedTime();
 
-      // Smooth mouse follow
-      mouseX += (targetX - mouseX) * 0.06;
-      mouseY += (targetY - mouseY) * 0.06;
+      // Damping velocity from dragging
+      if (!isDragging) {
+        masterGroup.rotation.y += velocityX;
+        masterGroup.rotation.x += velocityY;
+        velocityX *= 0.94;
+        velocityY *= 0.94;
 
-      // Speed smoothing
-      speedMultiplierRef.current += (targetSpeedRef.current - speedMultiplierRef.current) * 0.05;
-      const speed = speedMultiplierRef.current;
+        // Auto gentle constant cyber rotation
+        masterGroup.rotation.y += 0.0032;
+        masterGroup.rotation.x += 0.0014;
 
-      // Pulse reaction
-      if (pulseTriggerRef.current > 0) {
-        pulseTriggerRef.current -= delta * 2;
-        const pulseScale = 1 + Math.sin(pulseTriggerRef.current * Math.PI) * 0.35;
-        masterGroup.scale.set(pulseScale, pulseScale, pulseScale);
-      } else {
-        masterGroup.scale.set(1, 1, 1);
+        // Controlled subtle parallax without escaping bounds
+        const targetRotY = Math.max(-0.25, Math.min(0.25, mouseX * 0.25));
+        const targetRotX = Math.max(-0.2, Math.min(0.2, mouseY * 0.2));
+        masterGroup.position.x += (targetRotY - masterGroup.position.x) * 0.05;
+        masterGroup.position.y += (-targetRotX - masterGroup.position.y) * 0.05;
       }
 
-      // Continuous rotators
-      outerMesh.rotation.y += 0.005 * speed;
-      outerMesh.rotation.x += 0.003 * speed;
-      nodesPoints.rotation.y = outerMesh.rotation.y;
-      nodesPoints.rotation.x = outerMesh.rotation.x;
+      // Counter-rotating facets
+      innerCore.rotation.y -= 0.012;
+      innerCore.rotation.z += 0.008;
+      innerWire.rotation.y -= 0.012;
+      innerWire.rotation.z += 0.008;
 
-      innerCore.rotation.y -= 0.012 * speed;
-      innerCore.rotation.z += 0.008 * speed;
+      // Pulsing scale for organic cyber breathing
+      const pulse = 1 + Math.sin(elapsedTime * 2) * 0.04;
+      innerCore.scale.set(pulse, pulse, pulse);
+      innerWire.scale.set(pulse, pulse, pulse);
 
-      ring1.rotation.z += 0.009 * speed;
-      ring2.rotation.x += 0.007 * speed;
-
-      // Master parallax tilt
-      masterGroup.rotation.y += (mouseX - masterGroup.rotation.y * 0.5) * 0.04;
-      masterGroup.rotation.x += (-mouseY - masterGroup.rotation.x * 0.5) * 0.04;
-
-      // Floating bobbing
-      masterGroup.position.y = Math.sin(elapsedTime * 1.5) * 0.12;
-
-      // Animate swarm particles
-      const positions = swarmGeo.attributes.position.array;
-      for (let i = 0; i < particleCount; i++) {
-        particleAngles[i].theta += particleAngles[i].speed * speed;
-        const { radius, theta, phi } = particleAngles[i];
-        positions[i * 3] = radius * Math.cos(theta) * Math.cos(phi);
-        positions[i * 3 + 1] = radius * Math.sin(phi);
-        positions[i * 3 + 2] = radius * Math.sin(theta) * Math.cos(phi);
-      }
-      swarmGeo.attributes.position.needsUpdate = true;
+      ring1.rotation.z += 0.008;
+      ring2.rotation.z -= 0.006;
+      particleCloud.rotation.y += 0.002;
 
       renderer.render(scene, camera);
     };
 
     animate();
 
+    // Telemetry jitter
+    const telemetryInterval = setInterval(() => {
+      setTelemetryState((prev) => ({
+        fps: 59 + Math.floor(Math.random() * 2),
+        nodes: 82 + Math.floor(Math.random() * 7),
+        status: Math.random() > 0.05 ? 'SECURE' : 'DEFENDING',
+      }));
+    }, 2400);
+
+    // Cleanup
     return () => {
-      cancelAnimationFrame(animId);
-      container.removeEventListener('pointermove', handlePointerMove);
-      container.removeEventListener('pointerdown', handlePointerDown);
-      window.removeEventListener('pointerup', handlePointerUp);
-      window.removeEventListener('resize', handleResize);
-      if (renderer.domElement.parentNode) {
-        renderer.domElement.parentNode.removeChild(renderer.domElement);
+      cancelAnimationFrame(frameId);
+      clearInterval(telemetryInterval);
+      window.removeEventListener('resize', onResize);
+      domEl.removeEventListener('mousedown', onPointerDown);
+      domEl.removeEventListener('touchstart', onPointerDown);
+      window.removeEventListener('mousemove', onPointerMove);
+      window.removeEventListener('touchmove', onPointerMove);
+      window.removeEventListener('mouseup', onPointerUp);
+      window.removeEventListener('touchend', onPointerUp);
+      observer.disconnect();
+      themeObserver.disconnect();
+
+      if (container && renderer.domElement) {
+        container.removeChild(renderer.domElement);
       }
+      outerGeo.dispose();
+      outerMat.dispose();
+      innerGeo.dispose();
+      innerMat.dispose();
+      innerWireMat.dispose();
+      ring1Geo.dispose();
+      ring1Mat.dispose();
+      ring2Geo.dispose();
+      ring2Mat.dispose();
+      particlesGeo.dispose();
+      particlesMat.dispose();
       renderer.dispose();
     };
   }, []);
 
-  const handleBoostSpeed = () => {
-    targetSpeedRef.current = 3.5;
-    setSpinSpeed(3.5);
-    setTelemetry((prev) => ({ ...prev, entropy: '0.184', status: 'HYPER-SPIN' }));
-    setTimeout(() => {
-      targetSpeedRef.current = 1;
-      setSpinSpeed(1);
-      setTelemetry((prev) => ({ ...prev, entropy: '0.042', status: 'OPTIMAL' }));
-    }, 2800);
-  };
-
-  const handlePulseEnergy = () => {
-    pulseTriggerRef.current = 1;
-    setPulseKey((k) => k + 1);
-    setTelemetry((prev) => ({ ...prev, entropy: '0.312', status: 'SURGE' }));
-    setTimeout(() => {
-      setTelemetry((prev) => ({ ...prev, entropy: '0.042', status: 'OPTIMAL' }));
-    }, 1500);
-  };
-
-  const handleStabilize = () => {
-    targetSpeedRef.current = 0.5;
-    setSpinSpeed(0.5);
-    setTelemetry((prev) => ({ ...prev, entropy: '0.008', status: 'STABLE' }));
-    setTimeout(() => {
-      targetSpeedRef.current = 1;
-      setSpinSpeed(1);
-      setTelemetry((prev) => ({ ...prev, entropy: '0.042', status: 'OPTIMAL' }));
-    }, 2000);
-  };
-
   return (
-    <div className="quantum-core-card border-beam-container">
-      <div className="border-beam" />
-      {/* Top HUD Telemetry */}
-      <div className="quantum-core-hud">
-        <span className="core-hud-chip">
-          <span className="section-badge-dot" />
-          QUANTUM CORE · {telemetry.status}
-        </span>
-        <span className="core-hud-chip" style={{ color: '#818CF8' }}>
-          ENTROPY: {telemetry.entropy}
-        </span>
+    <div className="cyber-core-container" ref={containerRef}>
+      {/* Ambient Radial Depth Glow Behind WebGL */}
+      <div className="cyber-core-ambient-glow" />
+
+      {/* Floating HUD Telemetry Badges */}
+      <div className="cyber-hud-badge top-right">
+        <div className="cyber-hud-dot" />
+        <div className="cyber-hud-text">
+          <span className="cyber-hud-label">CORE TELEMETRY</span>
+          <span className="cyber-hud-val">
+            {telemetryState.status} • {telemetryState.nodes} NODES
+          </span>
+        </div>
       </div>
 
-      {/* Interactive 3D Canvas */}
-      <div ref={containerRef} className="quantum-core-canvas" />
-
-      {/* Interactive Controls Bar */}
-      <div className="quantum-core-controls">
-        <button
-          type="button"
-          className="core-ctrl-btn"
-          onClick={handleBoostSpeed}
-          title="Accelerate quantum orbital velocity"
-        >
-          ⚡ BOOST SPEED
-        </button>
-        <button
-          type="button"
-          className="core-ctrl-btn"
-          onClick={handlePulseEnergy}
-          title="Trigger a quantum kinetic shockwave"
-        >
-          🌌 PULSE CORE
-        </button>
-        <button
-          type="button"
-          className="core-ctrl-btn"
-          onClick={handleStabilize}
-          title="Stabilize orbital spin"
-        >
-          🔄 STABILIZE
-        </button>
+      <div className="cyber-hud-badge bottom-left">
+        <div className="cyber-hud-icon">⚡</div>
+        <div className="cyber-hud-text">
+          <span className="cyber-hud-label">REAL-TIME WEBGL</span>
+          <span className="cyber-hud-val">{telemetryState.fps} FPS • 60Hz SYNC</span>
+        </div>
       </div>
+
+      <div className="cyber-hud-badge bottom-right">
+        <div className="cyber-hud-icon">🛡️</div>
+        <div className="cyber-hud-text">
+          <span className="cyber-hud-label">ZERO-DAY DEFENSE</span>
+          <span className="cyber-hud-val">AES-256 ENCRYPTED</span>
+        </div>
+      </div>
+
+      {/* Interactive prompt hint */}
+      {!hasInteracted && (
+        <div className={`cyber-core-hint ${isInteracting ? 'hidden' : ''}`}>
+          <span>✦ Drag to rotate 3D core</span>
+        </div>
+      )}
     </div>
   );
 }

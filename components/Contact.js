@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { FaEnvelope, FaLinkedinIn, FaMapMarkerAlt, FaShieldAlt, FaPaperPlane, FaCheck } from 'react-icons/fa';
+import { FaEnvelope, FaLinkedinIn, FaMapMarkerAlt } from 'react-icons/fa';
+import SplitText from './SplitText';
+import ScrollReveal from './ScrollReveal';
+import MagneticButton from './MagneticButton';
 import content from '../data/content.json';
 
 export default function Contact() {
@@ -9,16 +12,9 @@ export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [status, setStatus] = useState(null); // 'success' | 'error' | 'loading'
   const [statusMsg, setStatusMsg] = useState('');
-  const [copiedEmail, setCopiedEmail] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(info.email);
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2400);
   };
 
   const handleSubmit = async (e) => {
@@ -36,219 +32,147 @@ export default function Contact() {
 
       if (res.ok) {
         setStatus('success');
-        setStatusMsg('Transmission received successfully! I will respond promptly.');
+        setStatusMsg('Message sent successfully! I\'ll get back to you soon.');
         setForm({ name: '', email: '', subject: '', message: '' });
       } else {
         setStatus('error');
-        setStatusMsg(data.error || 'Message dispatch failed. Please try again or email directly.');
+        setStatusMsg(data.error || 'Something went wrong. Please try again.');
       }
     } catch {
       setStatus('error');
-      setStatusMsg('Network disruption. Please email directly at omkumarind69@gmail.com');
+      setStatusMsg('Network error. Please check your connection.');
     }
 
     setTimeout(() => {
       setStatus(null);
       setStatusMsg('');
-    }, 6000);
+    }, 5000);
   };
 
+  const contactItems = [
+    { icon: FaEnvelope, label: 'Email', value: info.email, href: `mailto:${info.email}` },
+    { icon: FaLinkedinIn, label: 'LinkedIn', value: 'om-kumar04', href: info.linkedin },
+    { icon: FaMapMarkerAlt, label: 'Location', value: info.location, href: null },
+  ];
+
   return (
-    <section className="contact-section" id="contact">
+    <section className="contact" id="contact">
       <div className="section-container">
-        {/* Section Header */}
-        <div style={{ textAlign: 'center' }}>
-          <div className="section-badge">
-            <span className="section-badge-dot" />
-            <span>Encrypted Communications</span>
-          </div>
-          <h2 className="section-title">
-            Initiate <span className="gradient-text">Connection</span>
-          </h2>
-          <p className="section-desc" style={{ margin: '0 auto' }}>
-            Have a project, security audit proposal, or collaborative idea? Drop an encrypted dispatch below.
-          </p>
-        </div>
+        <ScrollReveal>
+          <span className="section-label">Connect</span>
+        </ScrollReveal>
 
-        {/* 2-Column Contact Hub */}
-        <div className="contact-grid">
-          {/* Left: Channels & Security Protocol */}
-          <div className="contact-channels-card glass-panel border-beam-container">
-            <div className="border-beam" />
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <FaShieldAlt style={{ color: 'var(--aurora-cyan)', fontSize: '1.4rem' }} />
-              <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Direct Inquiries</h3>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontFamily: 'var(--font-tech)' }}>
-                  OPEN TO OPPORTUNITIES &amp; COLLABORATION
-                </span>
-              </div>
+        <SplitText className="contact-heading">
+          Let&apos;s Work Together
+        </SplitText>
+
+        <div className="contact-grid" style={{ marginTop: '48px' }}>
+          <ScrollReveal direction="left" delay={0.1}>
+            <div className="contact-info">
+              <p style={{ marginBottom: '16px', fontSize: '16px', lineHeight: '1.7' }}>
+                Ready to collaborate or have a question? Feel free to reach out through any of the channels below or use the form.
+              </p>
+
+              {contactItems.map((item, i) => (
+                <div className="contact-info-item" key={i}>
+                  <div className="contact-info-icon">
+                    <item.icon />
+                  </div>
+                  <div>
+                    <div className="contact-info-label">{item.label}</div>
+                    <div className="contact-info-value">
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          data-cursor="link"
+                          target={item.href.startsWith('http') ? '_blank' : undefined}
+                          rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                        >
+                          {item.value}
+                        </a>
+                      ) : (
+                        item.value
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
+          </ScrollReveal>
 
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.98rem', lineHeight: '1.7' }}>
-              Whether you are looking for a cybersecurity security assessment, an AI deep learning developer, or an exceptional modern web experience, I am ready to build.
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {/* Email channel with quick-copy */}
-              <div className="contact-channel-item">
-                <div className="channel-icon-box">
-                  <FaEnvelope />
+          <ScrollReveal direction="right" delay={0.2}>
+            <form className="contact-form" onSubmit={handleSubmit}>
+              <div className="form-row">
+                <div className="form-group">
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder=" "
+                    value={form.name}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label>Your Name</label>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div className="channel-detail-label">Direct Email</div>
-                  <div className="channel-detail-val">{info.email}</div>
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-glass btn-pill"
-                  onClick={handleCopyEmail}
-                >
-                  {copiedEmail ? <FaCheck style={{ color: 'var(--aurora-emerald)' }} /> : 'Copy'}
-                </button>
-              </div>
-
-              {/* LinkedIn */}
-              <a
-                href={info.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-channel-item"
-              >
-                <div className="channel-icon-box">
-                  <FaLinkedinIn />
-                </div>
-                <div>
-                  <div className="channel-detail-label">Professional Network</div>
-                  <div className="channel-detail-val">linkedin.com/in/om-kumar04 ↗</div>
-                </div>
-              </a>
-
-              {/* Location */}
-              <div className="contact-channel-item">
-                <div className="channel-icon-box">
-                  <FaMapMarkerAlt />
-                </div>
-                <div>
-                  <div className="channel-detail-label">Base Coordinates</div>
-                  <div className="channel-detail-val">{info.location}</div>
+                <div className="form-group">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder=" "
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label>Your Email</label>
                 </div>
               </div>
-            </div>
 
-            <div
-              style={{
-                marginTop: 'auto',
-                padding: '14px 18px',
-                borderRadius: 'var(--radius-md)',
-                background: 'rgba(56, 189, 248, 0.07)',
-                border: '1px solid var(--glass-border-subtle)',
-                fontSize: '0.82rem',
-                color: 'var(--accent-primary)',
-                fontFamily: 'var(--font-tech)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <span className="status-pulse-dot" />
-              <span>TLS 1.3 SECURED · 256-BIT ENCRYPTION ACTIVE</span>
-            </div>
-          </div>
-
-          {/* Right: Interactive Glass Form */}
-          <div className="contact-form-panel glass-panel border-beam-container">
-            <div className="border-beam" />
-            
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-              <div className="form-group-item">
-                <label className="form-field-label" htmlFor="name">
-                  Your Full Name
-                </label>
+              <div className="form-group">
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  required
-                  placeholder="Alex Mercer"
-                  className="form-glass-input"
-                  value={form.name}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="form-group-item">
-                <label className="form-field-label" htmlFor="email">
-                  Your Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  placeholder="alex@enterprise.com"
-                  className="form-glass-input"
-                  value={form.email}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="form-group-item">
-                <label className="form-field-label" htmlFor="subject">
-                  Inquiry Topic
-                </label>
-                <input
-                  type="text"
-                  id="subject"
                   name="subject"
-                  required
-                  placeholder="Cybersecurity Audit / Web Application"
-                  className="form-glass-input"
+                  placeholder=" "
                   value={form.subject}
                   onChange={handleChange}
                 />
+                <label>Subject</label>
               </div>
 
-              <div className="form-group-item">
-                <label className="form-field-label" htmlFor="message">
-                  Transmission Details
-                </label>
+              <div className="form-group">
                 <textarea
-                  id="message"
                   name="message"
-                  required
-                  placeholder="Describe your project, timeline, and security parameters..."
-                  className="form-glass-textarea"
+                  placeholder=" "
                   value={form.message}
                   onChange={handleChange}
+                  required
+                  rows={4}
                 />
+                <label>Your Message</label>
               </div>
 
-              {statusMsg && (
-                <div className={`form-feedback-alert ${status}`}>
-                  <span>{status === 'success' ? '✓' : '⚠'}</span>
-                  <span>{statusMsg}</span>
+              <MagneticButton>
+                <button
+                  type="submit"
+                  className="btn btn-inverse"
+                  data-cursor="button"
+                  disabled={status === 'loading'}
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  {status === 'loading' ? (
+                    <span className="loading-spinner" />
+                  ) : (
+                    'Send Message'
+                  )}
+                </button>
+              </MagneticButton>
+
+              {status && status !== 'loading' && (
+                <div className={`form-status ${status}`}>
+                  {statusMsg}
                 </div>
               )}
-
-              <button
-                type="submit"
-                disabled={status === 'loading'}
-                className="btn btn-primary"
-                style={{ width: '100%', marginTop: '6px' }}
-              >
-                {status === 'loading' ? (
-                  <span>Transmitting...</span>
-                ) : (
-                  <>
-                    <span>Send Message</span>
-                    <FaPaperPlane style={{ fontSize: '0.85rem' }} />
-                  </>
-                )}
-              </button>
             </form>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

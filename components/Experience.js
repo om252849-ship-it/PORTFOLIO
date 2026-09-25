@@ -1,148 +1,252 @@
 'use client';
 
-import { useState } from 'react';
-import { FaGraduationCap, FaCertificate, FaBriefcase, FaMapMarkerAlt, FaExternalLinkAlt } from 'react-icons/fa';
+import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitText from './SplitText';
+import ScrollReveal from './ScrollReveal';
 import content from '../data/content.json';
 
-const TYPE_ICONS = {
-  education: FaGraduationCap,
-  certification: FaCertificate,
-  work: FaBriefcase,
-};
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Experience() {
   const { experience } = content;
-  const [filter, setFilter] = useState('all');
+  const sectionRef = useRef(null);
+  const timelineRef = useRef(null);
+  const lineFillRef = useRef(null);
+  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
 
-  const filteredExp =
-    filter === 'all'
-      ? experience
-      : experience.filter((item) => item.type === filter);
+  const handleSectionMouseMove = (e) => {
+    if (!sectionRef.current) return;
+    const rect = sectionRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    setMouseOffset({ x, y });
+  };
+
+  useEffect(() => {
+    const timeline = timelineRef.current;
+    const lineFill = lineFillRef.current;
+    if (!timeline || !lineFill) return;
+
+    // Animate the timeline line drawing based on scroll
+    gsap.to(lineFill, {
+      height: '100%',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: timeline,
+        start: 'top 60%',
+        end: 'bottom 40%',
+        scrub: 1,
+      },
+    });
+
+    // Animate dots
+    const dots = timeline.querySelectorAll('.timeline-dot');
+    dots.forEach((dot) => {
+      ScrollTrigger.create({
+        trigger: dot,
+        start: 'top 70%',
+        onEnter: () => dot.classList.add('active'),
+      });
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    };
+  }, []);
+
+  const getTypeBadge = (type) => {
+    switch (type) {
+      case 'work': return 'Work Experience';
+      case 'education': return 'Education';
+      case 'certification': return 'Certification';
+      default: return type;
+    }
+  };
 
   return (
-    <section className="experience-section" id="experience">
-      <div className="section-container">
-        {/* Section Header */}
-        <div style={{ textAlign: 'center' }}>
-          <div className="section-badge">
-            <span className="section-badge-dot" />
-            <span>Academic &amp; Professional Path</span>
-          </div>
-          <h2 className="section-title">
-            The Spatial <span className="gradient-text">Journey</span>
-          </h2>
-          <p className="section-desc" style={{ margin: '0 auto' }}>
-            Chronological milestones in computer science, cybersecurity credentials, and enterprise client operations.
-          </p>
-        </div>
+    <section
+      id="experience"
+      ref={sectionRef}
+      className="experience-section"
+      onMouseMove={handleSectionMouseMove}
+    >
+      {/* Background Ambient Glowing Orbs */}
+      <div className="experience-ambient-orb orb-top-left" aria-hidden="true" />
+      <div className="experience-ambient-orb orb-mid-right" aria-hidden="true" />
+      <div className="experience-ambient-orb orb-bottom-left" aria-hidden="true" />
 
-        {/* Filter Pills */}
-        <div className="skills-tab-nav" style={{ marginTop: '28px', marginBottom: '36px' }}>
-          <button
-            type="button"
-            className={`skills-tab-btn ${filter === 'all' ? 'active' : ''}`}
-            onClick={() => setFilter('all')}
-          >
-            All Milestones ({experience.length})
-          </button>
-          <button
-            type="button"
-            className={`skills-tab-btn ${filter === 'education' ? 'active' : ''}`}
-            onClick={() => setFilter('education')}
-          >
-            🎓 Education
-          </button>
-          <button
-            type="button"
-            className={`skills-tab-btn ${filter === 'certification' ? 'active' : ''}`}
-            onClick={() => setFilter('certification')}
-          >
-            📜 Certifications
-          </button>
-          <button
-            type="button"
-            className={`skills-tab-btn ${filter === 'work' ? 'active' : ''}`}
-            onClick={() => setFilter('work')}
-          >
-            💼 Work Experience
-          </button>
-        </div>
+      {/* Interactive Parallax Floating Milestone Badges */}
+      <div
+        className="floating-milestone milestone-1"
+        style={{
+          transform: `translate3d(${mouseOffset.x * 26}px, ${mouseOffset.y * 26}px, 0)`,
+        }}
+        aria-hidden="true"
+      >
+        <span className="milestone-icon">✦</span>
+        <span>AI & Deep Learning</span>
+      </div>
 
-        {/* Timeline Container */}
-        <div className="experience-timeline">
-          <div className="timeline-spine-line">
-            <div className="timeline-spine-fill" style={{ height: '100%' }} />
-          </div>
+      <div
+        className="floating-milestone milestone-2"
+        style={{
+          transform: `translate3d(${mouseOffset.x * -24}px, ${mouseOffset.y * -24}px, 0)`,
+        }}
+        aria-hidden="true"
+      >
+        <span className="milestone-icon">⚡</span>
+        <span>Cyber Security Analyst</span>
+      </div>
 
-          {filteredExp.map((item, index) => {
-            const Icon = TYPE_ICONS[item.type] || FaGraduationCap;
-            return (
-              <div key={index} className="timeline-node-card">
-                {/* Glowing Node Pin */}
-                <div className="timeline-node-pin">
-                  <Icon style={{ fontSize: '10px', color: 'var(--accent-primary)' }} />
-                </div>
+      <div
+        className="floating-milestone milestone-3"
+        style={{
+          transform: `translate3d(${mouseOffset.x * 30}px, ${mouseOffset.y * -20}px, 0)`,
+        }}
+        aria-hidden="true"
+      >
+        <span className="milestone-icon">◈</span>
+        <span>ARKA JAIN Univ · NAAC &apos;A&apos;</span>
+      </div>
 
-                {/* Glass Milestone Card */}
-                <div className="experience-glass-card glass-panel border-beam-container">
-                  <div className="border-beam" />
-                  
-                  <div className="exp-card-header">
-                    <div>
-                      <h3 className="exp-role-title">{item.role}</h3>
-                      <div className="exp-org-name">{item.company}</div>
-                      {item.location && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                          <FaMapMarkerAlt />
-                          <span>{item.location}</span>
-                        </div>
-                      )}
-                    </div>
-                    {item.endDate && (
-                      <span className="exp-date-pill">{item.endDate}</span>
+      <div
+        className="floating-milestone milestone-4"
+        style={{
+          transform: `translate3d(${mouseOffset.x * -26}px, ${mouseOffset.y * 24}px, 0)`,
+        }}
+        aria-hidden="true"
+      >
+        <span className="milestone-icon">📍</span>
+        <span>FiveS Digital Tech Center</span>
+      </div>
+
+      <div
+        className="floating-milestone milestone-5"
+        style={{
+          transform: `translate3d(${mouseOffset.x * 22}px, ${mouseOffset.y * 26}px, 0)`,
+        }}
+        aria-hidden="true"
+      >
+        <span className="milestone-icon">★</span>
+        <span>SNSVM School · Est. 1986</span>
+      </div>
+
+      <div
+        className="floating-milestone milestone-6"
+        style={{
+          transform: `translate3d(${mouseOffset.x * -20}px, ${mouseOffset.y * -18}px, 0)`,
+        }}
+        aria-hidden="true"
+      >
+        <span className="milestone-icon">🎨</span>
+        <span>Adobe CS6 Certified</span>
+      </div>
+
+      <div className="section-container" style={{ position: 'relative', zIndex: 2 }}>
+        <ScrollReveal>
+          <span className="section-label">Journey</span>
+        </ScrollReveal>
+
+        <SplitText>
+          Experience & Education
+        </SplitText>
+
+        <div className="timeline" ref={timelineRef} style={{ marginTop: '64px' }}>
+          <div className="timeline-line" />
+          <div className="timeline-line-fill" ref={lineFillRef} />
+
+          {experience.map((item, i) => (
+            <div className="timeline-item" key={i}>
+              <div className="timeline-spacer" />
+              <ScrollReveal
+                direction={i % 2 === 0 ? 'left' : 'right'}
+                delay={0.1}
+              >
+                <div className="timeline-card">
+                  <span className="timeline-type-badge">{getTypeBadge(item.type)}</span>
+                  <h4 className="timeline-role">{item.role}</h4>
+                  <p className="timeline-company">
+                    {item.mapUrl ? (
+                      <span className="timeline-map-wrap">
+                        <a
+                          href={item.mapUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="timeline-map-link"
+                          data-cursor="link"
+                          title={`View ${item.company} on Google Maps`}
+                        >
+                          <span className="timeline-company-name">{item.company}</span>
+                          {item.location && (
+                            <span className="timeline-location-group">
+                              <span className="timeline-location-sep">·</span>
+                              <span className="timeline-location">{item.location}</span>
+                            </span>
+                          )}
+                          <span className="timeline-map-icon" aria-hidden="true">📍</span>
+                        </a>
+
+                        {item.preview && (
+                          <span className="campus-preview-card" aria-hidden="true">
+                            <span className="campus-preview-img-container">
+                              <img
+                                src={item.preview.image}
+                                alt={item.preview.title}
+                                className="campus-preview-img"
+                                loading="lazy"
+                              />
+                              <span className="campus-preview-badge">
+                                📍 Google Maps Photo
+                              </span>
+                            </span>
+                            <span className="campus-preview-content">
+                              <span className="campus-preview-tagline">{item.preview.tagline}</span>
+                              <span className="campus-preview-title">{item.preview.title}</span>
+                              <span className="campus-preview-location">{item.preview.subtitle}</span>
+                              {item.preview.highlights && (
+                                <span className="campus-preview-pills">
+                                  {item.preview.highlights.map((h, hIdx) => (
+                                    <span key={hIdx} className="campus-preview-pill">
+                                      {h}
+                                    </span>
+                                  ))}
+                                </span>
+                              )}
+                              <span className="campus-preview-action">
+                                <span>Click to open in Google Maps</span>
+                                <span>↗</span>
+                              </span>
+                            </span>
+                          </span>
+                        )}
+                      </span>
+                    ) : (
+                      <>
+                        <span className="timeline-company-name">{item.company}</span>
+                        {item.location && (
+                          <span className="timeline-location-group">
+                            <span className="timeline-location-sep">·</span>
+                            <span className="timeline-location">{item.location}</span>
+                          </span>
+                        )}
+                      </>
                     )}
-                  </div>
-
-                  <ul className="exp-bullets-list">
-                    {item.bullets.map((bullet, bIndex) => (
-                      <li key={bIndex} className="exp-bullet-item">
-                        {bullet}
-                      </li>
+                  </p>
+                  <span className="timeline-date">
+                    {item.startDate ? `${item.startDate} — ` : ''}{item.endDate}
+                  </span>
+                  <ul className="timeline-bullets">
+                    {item.bullets.map((bullet, j) => (
+                      <li key={j}>{bullet}</li>
                     ))}
                   </ul>
-
-                  {/* Campus Visualizer Banner (if preview exists) */}
-                  {item.preview && (
-                    <div className="exp-campus-preview">
-                      <img
-                        src={item.preview.image}
-                        alt={item.preview.title}
-                        className="campus-preview-img"
-                        loading="lazy"
-                      />
-                      <div className="campus-preview-meta">
-                        <div>
-                          <div className="campus-preview-title">{item.preview.title}</div>
-                          <div style={{ fontSize: '0.75rem', opacity: 0.85 }}>{item.preview.tagline}</div>
-                        </div>
-                        {item.mapUrl && (
-                          <a
-                            href={item.mapUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="campus-map-link"
-                          >
-                            <span>Open Maps</span>
-                            <FaExternalLinkAlt style={{ fontSize: '0.68rem' }} />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  )}
                 </div>
-              </div>
-            );
-          })}
+              </ScrollReveal>
+              <div className="timeline-dot" />
+            </div>
+          ))}
         </div>
       </div>
     </section>
