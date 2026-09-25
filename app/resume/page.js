@@ -64,7 +64,6 @@ export default function ResumePage() {
           <p className="resume-tagline">{hero.subtitle}</p>
           <div className="resume-contact-row">
             <span>📍 {contact.location}</span>
-            <a href={`tel:${contact.phone}`}>📞 {contact.phone}</a>
             <a href={`mailto:${contact.email}`}>✉ {contact.email}</a>
             <a href={contact.linkedin} target="_blank" rel="noopener noreferrer">
               🔗 linkedin.com/in/om-kumar04

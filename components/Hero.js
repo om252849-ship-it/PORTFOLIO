@@ -7,15 +7,27 @@ import MagneticButton from './MagneticButton';
 export default function Hero() {
   const heroRef = useRef(null);
   const nameRef = useRef(null);
+  const badgeRef = useRef(null);
   const subtitleRef = useRef(null);
   const descRef = useRef(null);
   const ctaRef = useRef(null);
+  const tagsRef = useRef(null);
   const scrollIndicatorRef = useRef(null);
 
   useEffect(() => {
-    const tl = gsap.timeline({ delay: 0.3 });
+    const tl = gsap.timeline({ delay: 0.2 });
 
-    // Animate name characters
+    // 1. Status Badge
+    if (badgeRef.current) {
+      tl.to(badgeRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: 'power3.out',
+      });
+    }
+
+    // 2. Animate name characters
     if (nameRef.current) {
       const text = 'Om Kumar';
       nameRef.current.innerHTML = '';
@@ -33,78 +45,52 @@ export default function Hero() {
       tl.to(nameRef.current.querySelectorAll('.char'), {
         y: '0%',
         opacity: 1,
-        duration: 0.9,
+        duration: 0.85,
         ease: 'power3.out',
         stagger: 0.04,
-      });
+      }, '-=0.3');
     }
 
+    // 3. Subtitle
     tl.to(subtitleRef.current, {
       opacity: 1,
       y: 0,
-      duration: 0.7,
+      duration: 0.65,
       ease: 'power2.out',
-    }, '-=0.3');
+    }, '-=0.4');
 
+    // 4. Description
     tl.to(descRef.current, {
       opacity: 1,
       y: 0,
-      duration: 0.7,
+      duration: 0.65,
       ease: 'power2.out',
     }, '-=0.4');
 
+    // 5. CTAs
     tl.to(ctaRef.current, {
       opacity: 1,
       y: 0,
-      duration: 0.7,
+      duration: 0.65,
       ease: 'power2.out',
     }, '-=0.4');
 
+    // 6. Tags
+    if (tagsRef.current) {
+      tl.to(tagsRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'power2.out',
+      }, '-=0.3');
+    }
+
+    // 7. Scroll Indicator
     tl.to(scrollIndicatorRef.current, {
       opacity: 1,
       duration: 0.6,
       ease: 'power2.out',
     }, '-=0.2');
-
-    // Parallax on scroll (optimized)
-    const hero = heroRef.current;
-    if (!hero) return;
-    let heroHeight = hero.offsetHeight;
-    const updateHeight = () => {
-      heroHeight = hero.offsetHeight;
-    };
-    window.addEventListener('resize', updateHeight);
-
-    let ticking = false;
-    const handleScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        ticking = false;
-        const scrollY = window.scrollY;
-        if (scrollY < heroHeight) {
-          const progress = scrollY / heroHeight;
-          if (nameRef.current) {
-            nameRef.current.style.transform = `translateY(${scrollY * 0.3}px)`;
-            nameRef.current.style.opacity = 1 - progress * 1.2;
-          }
-          if (subtitleRef.current) {
-            subtitleRef.current.style.transform = `translateY(${scrollY * 0.2}px)`;
-          }
-          if (ctaRef.current) {
-            ctaRef.current.style.transform = `translateY(${scrollY * 0.15}px)`;
-          }
-        }
-        // When scrollY >= heroHeight, do nothing (preserve last values)
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // initial call
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', updateHeight);
-    };
   }, []);
 
   const handleScrollTo = (target) => {
@@ -117,24 +103,34 @@ export default function Hero() {
   return (
     <section className="hero" ref={heroRef} id="hero">
       <div className="hero-content">
+        {/* Status Pill */}
+        <div className="hero-status-pill" ref={badgeRef}>
+          <span className="hero-status-pulse" />
+          <span className="hero-status-text">AVAILABLE FOR PROJECTS &amp; SECURITY RESEARCH</span>
+        </div>
+
         <h1 className="hero-name" ref={nameRef} style={{ overflow: 'hidden' }}>
           Om Kumar
         </h1>
+
         <p className="hero-subtitle" ref={subtitleRef}>
           Computer Science · Cybersecurity · Creative Design
         </p>
+
         <p className="hero-description" ref={descRef}>
-          Building secure digital experiences with creative precision
+          Architecting secure digital infrastructures, conducting ethical security research, and engineering high-performance interactive web experiences.
         </p>
+
         <div className="hero-cta" ref={ctaRef}>
           <MagneticButton>
             <a
               href="#projects"
-              className="btn btn-primary"
+              className="btn btn-primary hero-btn-main"
               data-cursor="button"
               onClick={(e) => { e.preventDefault(); handleScrollTo('#projects'); }}
             >
-              Explore My Work
+              <span>Explore Featured Work</span>
+              <span className="btn-arrow">↓</span>
             </a>
           </MagneticButton>
           <MagneticButton>
@@ -143,7 +139,8 @@ export default function Hero() {
               className="btn btn-secondary"
               data-cursor="button"
             >
-              View Resume ↗
+              <span>View Resume</span>
+              <span className="btn-arrow">↗</span>
             </a>
           </MagneticButton>
           <MagneticButton>
@@ -152,17 +149,20 @@ export default function Hero() {
               className="btn btn-outline"
               data-cursor="button"
               onClick={(e) => { e.preventDefault(); handleScrollTo('#contact'); }}
-              style={{
-                background: 'transparent',
-                border: '1px solid var(--border-strong)',
-                color: 'var(--text-primary)',
-              }}
             >
-              Get in Touch
+              <span>Get in Touch</span>
             </a>
           </MagneticButton>
         </div>
+
+        {/* Tech micro-tags */}
+        <div className="hero-tech-tags" ref={tagsRef}>
+          <span className="tech-tag-pill">🛡️ Ethical Hacking</span>
+          <span className="tech-tag-pill">⚡ Full-Stack React/Next.js</span>
+          <span className="tech-tag-pill">🔒 Vulnerability Assessment</span>
+        </div>
       </div>
+
       <div className="hero-scroll-indicator" ref={scrollIndicatorRef}>
         <span>Scroll</span>
         <div className="scroll-arrow" />

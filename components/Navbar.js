@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import ThemeToggle from './ThemeToggle';
 
 const NAV_LINKS = [
   { label: 'About', href: '#about' },
@@ -75,52 +76,43 @@ export default function Navbar() {
             OM<span>.</span>
           </a>
 
-          <ul className="navbar-links">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
+          <div className="navbar-right">
+            <ul className="navbar-links">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    data-cursor="link"
+                    className={activeSection === link.href.replace('#', '') ? 'active' : ''}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+              <li>
                 <a
-                  href={link.href}
-                  data-cursor="link"
-                  className={activeSection === link.href.replace('#', '') ? 'active' : ''}
-                  onClick={(e) => handleNavClick(e, link.href)}
+                  href="/resume"
+                  className="navbar-resume-pill"
+                  data-cursor="button"
                 >
-                  {link.label}
+                  Resume ↗
                 </a>
               </li>
-            ))}
-            <li>
-              <a
-                href="/resume"
-                className="navbar-resume-pill"
-                data-cursor="button"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  padding: '6px 14px',
-                  borderRadius: '999px',
-                  border: '1px solid var(--accent)',
-                  color: 'var(--accent-hover)',
-                  fontWeight: 600,
-                  fontSize: '0.85rem',
-                  marginLeft: '8px',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                Resume ↗
-              </a>
-            </li>
-          </ul>
+            </ul>
 
-          <button
-            className={`navbar-hamburger ${mobileOpen ? 'open' : ''}`}
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-          >
-            <span />
-            <span />
-            <span />
-          </button>
+            <ThemeToggle />
+
+            <button
+              className={`navbar-hamburger ${mobileOpen ? 'open' : ''}`}
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle menu"
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
         </div>
       </nav>
 

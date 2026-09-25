@@ -12,7 +12,6 @@ This is the Next.js web application for **Om Kumar's Portfolio & Interactive Res
 
 ## Om Kumar Details
 - **Role**: Computer Science Graduate · Cybersecurity Specialist · Creative Designer
-- **Phone**: +91 7739803291
 - **Email**: omkumarind69@gmail.com
 - **LinkedIn**: https://linkedin.com/in/om-kumar04
 - **Location**: Jamshedpur, Jharkhand, India

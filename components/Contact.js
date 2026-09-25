@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FaEnvelope, FaPhone, FaLinkedinIn, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaEnvelope, FaLinkedinIn, FaMapMarkerAlt } from 'react-icons/fa';
 import SplitText from './SplitText';
 import ScrollReveal from './ScrollReveal';
 import MagneticButton from './MagneticButton';
@@ -51,7 +51,6 @@ export default function Contact() {
 
   const contactItems = [
     { icon: FaEnvelope, label: 'Email', value: info.email, href: `mailto:${info.email}` },
-    { icon: FaPhone, label: 'Phone', value: info.phone, href: `tel:${info.phone}` },
     { icon: FaLinkedinIn, label: 'LinkedIn', value: 'om-kumar04', href: info.linkedin },
     { icon: FaMapMarkerAlt, label: 'Location', value: info.location, href: null },
   ];
@@ -63,14 +62,14 @@ export default function Contact() {
           <span className="section-label">Connect</span>
         </ScrollReveal>
 
-        <SplitText className="" style={{ color: 'var(--text-inverse)' }}>
+        <SplitText className="contact-heading">
           Let&apos;s Work Together
         </SplitText>
 
         <div className="contact-grid" style={{ marginTop: '48px' }}>
           <ScrollReveal direction="left" delay={0.1}>
             <div className="contact-info">
-              <p style={{ color: 'var(--text-muted)', marginBottom: '16px', fontSize: '16px', lineHeight: '1.7' }}>
+              <p style={{ marginBottom: '16px', fontSize: '16px', lineHeight: '1.7' }}>
                 Ready to collaborate or have a question? Feel free to reach out through any of the channels below or use the form.
               </p>
 

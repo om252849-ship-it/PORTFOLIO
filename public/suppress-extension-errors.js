@@ -4,16 +4,21 @@
 
   function isExtensionError(item) {
     if (!item) return false;
-    var str = String(
-      (item && (item.stack || item.message || item.filename || item.reason || item)) || ''
-    );
-    return str.indexOf('chrome-extension:') !== -1 ||
+    var str = '';
+    try {
+      if (typeof item === 'string') str = item;
+      else if (item instanceof Error) str = (item.message || '') + ' ' + (item.stack || '');
+      else str = JSON.stringify(item);
+    } catch (e) {
+      str = String((item && (item.stack || item.message)) || item || '');
+    }
+    return str.indexOf('bis_skin_checked') !== -1 ||
+           str.indexOf('bis_register') !== -1 ||
+           str.indexOf('bis_') !== -1 ||
+           str.indexOf('chrome-extension:') !== -1 ||
            str.indexOf('moz-extension:') !== -1 ||
            str.indexOf('safari-extension:') !== -1 ||
            str.indexOf('eppiocemhmnlbhjplcgkofciiegomcon') !== -1 ||
-           str.indexOf('M_ID') !== -1 ||
-           str.indexOf('bis_skin_checked') !== -1 ||
-           str.indexOf('bis_register') !== -1 ||
            str.indexOf('__processed_') !== -1;
   }
 
