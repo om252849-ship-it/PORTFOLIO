@@ -108,7 +108,7 @@ export default function Experience() {
         aria-hidden="true"
       >
         <span className="milestone-icon">◈</span>
-        <span>ARKA JAIN Univ · NAAC 'A'</span>
+        <span>ARKA JAIN Univ · NAAC &apos;A&apos;</span>
       </div>
 
       <div

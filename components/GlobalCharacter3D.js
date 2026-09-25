@@ -478,9 +478,12 @@ export default function GlobalCharacter3D() {
       targetRotY = pose.rotY;
       targetRotZ = pose.rotZ;
 
-      if (pose.mode !== characterMode) {
-        setCharacterMode(pose.mode);
-      }
+      setCharacterMode(prevMode => {
+        if (pose.mode !== prevMode) {
+          return pose.mode;
+        }
+        return prevMode;
+      });
 
       // Smooth position interpolation
       characterRoot.position.x += (targetX - characterRoot.position.x) * 0.08;

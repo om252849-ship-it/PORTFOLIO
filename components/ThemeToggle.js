@@ -4,24 +4,25 @@ import { useState, useEffect, useRef } from 'react';
 
 export default function ThemeToggle() {
   // mode: 'light' | 'dark' | 'system'
-  const [mode, setMode] = useState('system');
+  const [mode, setMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('om_theme') || 'system';
+    }
+    return 'system';
+  });
   const [appliedTheme, setAppliedTheme] = useState('light');
   const [sparks, setSparks] = useState([]);
   const buttonRef = useRef(null);
 
-  useEffect(() => {
-    // Initial read
-    const stored = localStorage.getItem('om_theme') || 'system';
-    setMode(stored);
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
 
-    const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
-    
+  useEffect(() => {
     const resolveTheme = (targetMode) => {
       if (targetMode === 'dark' || targetMode === 'light') return targetMode;
       return systemDark.matches ? 'dark' : 'light';
     };
 
-    const current = resolveTheme(stored);
+    const current = resolveTheme(mode);
     setAppliedTheme(current);
     document.documentElement.setAttribute('data-theme', current);
 
@@ -37,7 +38,7 @@ export default function ThemeToggle() {
 
     systemDark.addEventListener('change', handleSystemChange);
     return () => systemDark.removeEventListener('change', handleSystemChange);
-  }, []);
+  }, [mode]);
 
   const triggerSparks = (x, y) => {
     const newSparks = Array.from({ length: 8 }, (_, i) => {
