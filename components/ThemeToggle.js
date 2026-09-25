@@ -14,9 +14,9 @@ export default function ThemeToggle() {
   const [sparks, setSparks] = useState([]);
   const buttonRef = useRef(null);
 
-  const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
-
   useEffect(() => {
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+
     const resolveTheme = (targetMode) => {
       if (targetMode === 'dark' || targetMode === 'light') return targetMode;
       return systemDark.matches ? 'dark' : 'light';
